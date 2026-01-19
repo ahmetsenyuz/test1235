@@ -1,0 +1,82 @@
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+
+# Visual Studio 2015/2017/2019
+.vs/
+.vscode/
+*.vscode-test
+*.user
+*.vs
+*.suo
+*.ntvs*
+*.njsproj
+*.sln.docstates
+
+# Visual Studio 2015 - 2019 cache/options
+*.cache
+*.cache.*
+
+# Visual Studio 2019 preview
+*.preview.config
+
+# Visual Studio 2022
+*.vswatch
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# Mac
+.DS_Store
+
+# NuGet packages
+packages/
+*.nuget/
+
+# IDE
+.idea/
+*.iml
+
+# Test results
+TestResults/
+
+# Coverage reports
+coverage/
+.coverage/
+
+# Local config file
+.local/
+
+# DotNetCore
+*.dll
+*.exe
+*.pdb
+bin/
+obj/
+*.csproj.user
+
+# Rider
+.idea/
+*.idea/
+*.ipr
+*.iws
+
+# ReSharper
+_ReSharper*/
+*.ReSharper
+*.resharper
+
+# Visual Studio 2017 cache
+*.vcxitems
+*.vcxitems.filters
+*.vcxproj.filters
+*.vcxproj.user
