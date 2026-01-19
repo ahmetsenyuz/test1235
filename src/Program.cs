@@ -10,11 +10,11 @@ namespace TodoApp
     {
         static void Main(string[] args)
         {
-            var backlogManager = new BacklogManager();
+            var backlogManager = new BacklogItemManager();
             bool running = true;
 
             Console.WriteLine("Welcome to the C# Backlog Manager!");
-            Console.WriteLine("==================================");
+            Console.WriteLine("==============================");
 
             while (running)
             {
@@ -44,7 +44,7 @@ namespace TodoApp
                         Console.Write("Enter item number to mark as completed: ");
                         if (int.TryParse(Console.ReadLine(), out int completeIndex))
                         {
-                            backlogManager.MarkAsCompleted(completeIndex - 1);
+                            backlogManager.MarkAsCompleted(completeIndex - 1); // Adjust for 1-based indexing
                         }
                         else
                         {
@@ -56,7 +56,7 @@ namespace TodoApp
                         Console.Write("Enter item number to delete: ");
                         if (int.TryParse(Console.ReadLine(), out int deleteIndex))
                         {
-                            backlogManager.DeleteItem(deleteIndex - 1);
+                            backlogManager.DeleteItem(deleteIndex - 1); // Adjust for 1-based indexing
                         }
                         else
                         {
