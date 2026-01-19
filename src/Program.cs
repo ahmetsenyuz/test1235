@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
+using BacklogApp.Models;
 
 namespace TodoApp
 {
@@ -7,11 +9,11 @@ namespace TodoApp
     {
         static void Main(string[] args)
         {
-            var todoManager = new TodoManager();
+            var backlogManager = new BacklogManager();
             bool running = true;
 
-            Console.WriteLine("Welcome to the C# To-Do App!");
-            Console.WriteLine("==============================");
+            Console.WriteLine("Welcome to the C# Backlog Manager!");
+            Console.WriteLine("==================================");
 
             while (running)
             {
@@ -21,6 +23,7 @@ namespace TodoApp
                 Console.WriteLine("3. Mark item as completed");
                 Console.WriteLine("4. Delete a backlog item");
                 Console.WriteLine("5. Exit");
+
                 Console.Write("Choose an option (1-5): ");
 
                 string choice = Console.ReadLine();
@@ -28,19 +31,19 @@ namespace TodoApp
                 switch (choice)
                 {
                     case "1":
-                        todoManager.ViewAllItems();
+                        backlogManager.ViewAllItems();
                         break;
                     case "2":
                         Console.Write("Enter backlog item title: ");
                         string title = Console.ReadLine();
-                        todoManager.AddItem(title);
+                        backlogManager.AddItem(title);
                         break;
                     case "3":
-                        todoManager.ViewAllItems();
+                        backlogManager.ViewAllItems();
                         Console.Write("Enter item number to mark as completed: ");
                         if (int.TryParse(Console.ReadLine(), out int completeIndex))
                         {
-                            todoManager.MarkAsCompleted(completeIndex - 1);
+                            backlogManager.MarkAsCompleted(completeIndex - 1);
                         }
                         else
                         {
@@ -48,11 +51,11 @@ namespace TodoApp
                         }
                         break;
                     case "4":
-                        todoManager.ViewAllItems();
+                        backlogManager.ViewAllItems();
                         Console.Write("Enter item number to delete: ");
                         if (int.TryParse(Console.ReadLine(), out int deleteIndex))
                         {
-                            todoManager.DeleteItem(deleteIndex - 1);
+                            backlogManager.DeleteItem(deleteIndex - 1);
                         }
                         else
                         {
@@ -61,7 +64,7 @@ namespace TodoApp
                         break;
                     case "5":
                         running = false;
-                        Console.WriteLine("Thank you for using the C# To-Do App!");
+                        Console.WriteLine("Thank you for using the C# Backlog Manager!");
                         break;
                     default:
                         Console.WriteLine("Invalid option. Please try again.");
@@ -69,87 +72,88 @@ namespace TodoApp
                 }
             }
         }
-    }
 
-    public class TodoItem
-    {
-        public int Id { get; set; }
-        public string Title { get; set; }
-        public bool IsCompleted { get; set; }
-
-        public TodoItem(int id, string title)
+        public class BacklogItem
         {
-            Id = id;
-            Title = title;
-            IsCompleted = false;
-        }
-    }
+            public string Id { get; set; } = Guid.NewGuid().ToString();
+            public string Title { get; set; } = string.Empty;
+            public Status Status { get; set; } = Status.ToDo;
+            public Priority Priority { get; set; } = Priority.Medium;
+            public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+            public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-    public class TodoManager
-    {
-        private List<TodoItem> _items;
-        private int _nextId;
-
-        public TodoManager()
-        {
-            _items = new List<TodoItem>();
-            _nextId = 1;
-        }
-
-        public void AddItem(string title)
-        {
-            if (string.IsNullOrWhiteSpace(title))
+            public BacklogItem(string title)
             {
-                Console.WriteLine("Title cannot be empty.");
-                return;
-            }
-
-            var newItem = new TodoItem(_nextId++, title);
-            _items.Add(newItem);
-            Console.WriteLine($"Added item: {title}");
-        }
-
-        public void ViewAllItems()
-        {
-            if (_items.Count == 0)
-            {
-                Console.WriteLine("No backlog items found.");
-                return;
-            }
-
-            Console.WriteLine("\nBacklog Items:");
-            Console.WriteLine("--------------");
-            foreach (var item in _items)
-            {
-                string status = item.IsCompleted ? "[Completed]" : "[Pending]";
-                Console.WriteLine($"{item.Id}. {status} {item.Title}");
+                Title = title;
             }
         }
 
-        public void MarkAsCompleted(int index)
+        public class BacklogManager
         {
-            if (index >= 0 && index < _items.Count)
-            {
-                _items[index].IsCompleted = true;
-                Console.WriteLine($"Marked item '{_items[index].Title}' as completed.");
-            }
-            else
-            {
-                Console.WriteLine("Invalid item number.");
-            }
-        }
+            private List<BacklogItem> _items;
+            private int _nextId;
 
-        public void DeleteItem(int index)
-        {
-            if (index >= 0 && index < _items.Count)
+            public BacklogManager()
             {
-                string title = _items[index].Title;
-                _items.RemoveAt(index);
-                Console.WriteLine($"Deleted item: {title}");
+                _items = new List<BacklogItem>();
+                _nextId = 1;
             }
-            else
+
+            public void AddItem(string title)
             {
-                Console.WriteLine("Invalid item number.");
+                if (string.IsNullOrWhiteSpace(title))
+                {
+                    Console.WriteLine("Title cannot be empty.");
+                    return;
+                }
+
+                var newItem = new BacklogItem(title);
+                _items.Add(newItem);
+                Console.WriteLine($"Added item: {title}");
+            }
+
+            public void ViewAllItems()
+            {
+                if (_items.Count == 0)
+                {
+                    Console.WriteLine("No backlog items found.");
+                    return;
+                }
+
+                Console.WriteLine("\nBacklog Items:");
+                Console.WriteLine("----------------");
+                foreach (var item in _items)
+                {
+                    string status = item.Status == Status.Done ? "[Completed]" : "[Pending]";
+                    Console.WriteLine($"{item.Id}. {status} {item.Title}");
+                }
+            }
+
+            public void MarkAsCompleted(int index)
+            {
+                if (index >= 0 && index < _items.Count)
+                {
+                    _items[index].Status = Status.Done;
+                    Console.WriteLine($"Marked item '{_items[index].Title}' as completed.");
+                }
+                else
+                {
+                    Console.WriteLine("Invalid item number.");
+                }
+            }
+
+            public void DeleteItem(int index)
+            {
+                if (index >= 0 && index < _items.Count)
+                {
+                    string title = _items[index].Title;
+                    _items.RemoveAt(index);
+                    Console.WriteLine($"Deleted item: {title}");
+                }
+                else
+                {
+                    Console.WriteLine("Invalid item number.");
+                }
             }
         }
     }
