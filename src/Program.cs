@@ -14,7 +14,7 @@ namespace TodoApp
             bool running = true;
 
             Console.WriteLine("Welcome to the C# Backlog Manager!");
-            Console.WriteLine("====================================");
+            Console.WriteLine("==================================");
 
             while (running)
             {
@@ -156,7 +156,7 @@ namespace TodoApp
                     if (item != null)
                     {
                         string title = item.Title;
-                        _repository.Delete(index + 1);
+                        _repository.Delete(index + 1); // Adjust for 1-based indexing
                         Console.WriteLine($"Deleted item: {title}");
                     }
                 }
