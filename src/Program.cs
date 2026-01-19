@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using BacklogApp.Models;
 
@@ -90,31 +91,31 @@ namespace TodoApp
 
         public class BacklogManager
         {
-            private List<BacklogItem> _items;
-            private int _nextId;
+            private readonly List<BacklogItem> _items;
+            private readonly BacklogItemRepository _repository;
 
             public BacklogManager()
             {
                 _items = new List<BacklogItem>();
-                _nextId = 1;
+                _repository = new BacklogItemRepository();
             }
 
             public void AddItem(string title)
             {
-                if (string.IsNullOrWhiteSpace(title))
+                if (string.IsNullOrEmpty(title))
                 {
                     Console.WriteLine("Title cannot be empty.");
                     return;
                 }
 
                 var newItem = new BacklogItem(title);
-                _items.Add(newItem);
+                _repository.Add(newItem);
                 Console.WriteLine($"Added item: {title}");
             }
 
             public void ViewAllItems()
             {
-                if (_items.Count == 0)
+                if (_repository.Count == 0)
                 {
                     Console.WriteLine("No backlog items found.");
                     return;
@@ -122,7 +123,7 @@ namespace TodoApp
 
                 Console.WriteLine("\nBacklog Items:");
                 Console.WriteLine("----------------");
-                foreach (var item in _items)
+                foreach (var item in _repository.GetAll())
                 {
                     string status = item.Status == Status.Done ? "[Completed]" : "[Pending]";
                     Console.WriteLine($"{item.Id}. {status} {item.Title}");
@@ -131,10 +132,15 @@ namespace TodoApp
 
             public void MarkAsCompleted(int index)
             {
-                if (index >= 0 && index < _items.Count)
+                if (index >= 0 && index < _repository.Count)
                 {
-                    _items[index].Status = Status.Done;
-                    Console.WriteLine($"Marked item '{_items[index].Title}' as completed.");
+                    var item = _repository.GetById(index + 1); // Adjust for 1-based indexing
+                    if (item != null)
+                    {
+                        item.Status = Status.Done;
+                        _repository.Update(item);
+                        Console.WriteLine($"Marked item '{item.Title}' as completed.");
+                    }
                 }
                 else
                 {
@@ -144,11 +150,15 @@ namespace TodoApp
 
             public void DeleteItem(int index)
             {
-                if (index >= 0 && index < _items.Count)
+                if (index >= 0 && index < _repository.Count)
                 {
-                    string title = _items[index].Title;
-                    _items.RemoveAt(index);
-                    Console.WriteLine($"Deleted item: {title}");
+                    var item = _repository.GetById(index + 1); // Adjust for 1-based indexing
+                    if (item != null)
+                    {
+                        string title = item.Title;
+                        _repository.Delete(index + 1);
+                        Console.WriteLine($"Deleted item: {title}");
+                    }
                 }
                 else
                 {
