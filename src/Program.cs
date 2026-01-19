@@ -14,7 +14,7 @@ namespace TodoApp
             bool running = true;
 
             Console.WriteLine("Welcome to the C# Backlog Manager!");
-            Console.WriteLine("==================================");
+            Console.WriteLine("====================================");
 
             while (running)
             {
